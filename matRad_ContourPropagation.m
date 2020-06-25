@@ -1,4 +1,4 @@
- function [Iestimated,movingScenery,correlation,similitude,t,dvf] = matRad_ContourPropagation(fixedScene,movingScene,structNumber,ct,cst,pyramLevels,initialItera,smoothLevels)
+  function [Iestimated,correlation,similitude,t,dvf] = matRad_ContourPropagationV2(fixedScene,movingScene,pyramLevels,initialItera,smoothLevels)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % matRad function non rigid registration to estimate the contour
 % propagation and displacement vector fields of a tomography sequence, from
@@ -12,8 +12,7 @@
 %                  and 10 from ct structure
 %   fixedScene:    image scene fixed from ct structure
 %
-%   strucNumber:   structure number cst; 2 for complete tomography   
-%                  3 for liver struct, 4 for PTV struct
+%   imageModality: modality of the image
 %   ct:            matRad ct structure 
 %   cst:           matRad cst struct 
 %   pyramLevels:   number of multi-resolution image pyramid levels to use,
@@ -46,42 +45,15 @@
     for j=2:pyramLevels
         N(j) = round(N(j-1)*0.5);
     end
-    
-    fixedTomogra = ct.cubeHU{1,fixedScene}; %fixed tomography 
-    movingTomogra = ct.cubeHU{1,movingScene}; %moving tomography 
-    
-    % compute displacement vector fields based-demons algorithm, where fixed image is ct.cubeHU{1,fixedScene} and moving image is ct.cubeHU{1,movingScene}
-    [dvf,~] = imregdemons(fixedTomogra,movingTomogra,N(1:pyramLevels),'PyramidLevels',pyramLevels,'AccumulatedFieldSmoothing',smoothLevels);
 
-    switch structNumber
-        case 2
-            Iestimated=imwarp(fixedTomogra,dvf);
-            movingScenery = movingTomogra;
-            correlation = corr3D(movingScenery,Iestimated); % correlation coefficient          
-            similitude = ssd3D(movingScenery,Iestimated);  % metric ssd
-        case {3,4}  
-            % fixed scene 
-            cube_fixedScena = zeros(ct.cubeDim);
-            structFixed_cst = cst{structNumber,4}{fixedScene};
-            [x2,y2,z2] = ind2sub(ct.cubeDim,structFixed_cst);
-            for i=1:length(x2)
-                cube_fixedScena(x2(i),y2(i),z2(i)) = structFixed_cst(i); 
-            end
-
-            % moving scene 
-            movingScenery = zeros(ct.cubeDim);
-            structMoving_cst = cst{structNumber,4}{movingScene};
-            [x1,y1,z1] = ind2sub(ct.cubeDim,structMoving_cst);
-            for i=1:length(x1)
-                movingScenery(x1(i),y1(i),z1(i)) = structMoving_cst(i);
-            end
-
-            % binary case image estimated with the imwarp() function
-            Iestimated = imwarp(cube_fixedScena,dvf);
-            correlation = corr3D(movingScenery,Iestimated); % correlation coefficient          
-            similitude = ssd3D(movingScenery,Iestimated);  % metric ssd
-           
-    end 
-       
+            % compute displacement vector fields based-demons algorithm, where fixed image is ct.cubeHU{1,fixedScene} and moving image is ct.cubeHU{1,movingScene}
+            [dvf,~] = imregdemons(fixedScene,movingScene,N(1:pyramLevels),'PyramidLevels',pyramLevels,'AccumulatedFieldSmoothing',smoothLevels);
+            
+            Iestimated=imwarp(fixedScene,dvf);
+%             movingScenery = movingTomogra;
+            correlation = corr3D(movingScene,Iestimated); % correlation coefficient          
+            similitude = ssd3D(movingScene,Iestimated);  % metric ssd
+            
     t=toc;
 end
+
