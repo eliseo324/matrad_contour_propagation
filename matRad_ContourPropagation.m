@@ -80,21 +80,6 @@
             Iestimated = imwarp(cube_fixedScena,dvf);
             correlation = corr3D(movingScenery,Iestimated); % correlation coefficient          
             similitude = ssd3D(movingScenery,Iestimated);  % metric ssd
-
-
-%             for i=1:256
-%                 for j=1:256
-%                     for k=1:130
-%                         if cube_movingScenaBinary_Est(i,j,k) > 0 && cube_movingScenaBinary_Est(i,j,k) <= 0.5
-%                             cube_movingScenaBinary_Est(i,j,k) = 0;
-%                         elseif cube_movingScenaBinary_Est(i,j,k) > 0.5 && cube_movingScenaBinary_Est(i,j,k) < 1
-%                             cube_movingScenaBinary_Est(i,j,k) = 1;
-%                         end
-%                     end
-%                 end
-%             end 
-% 
-%             Iestimated = cube_movingScenaBinary_Est;
            
     end 
        
