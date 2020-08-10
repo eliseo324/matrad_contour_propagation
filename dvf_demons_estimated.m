@@ -1,4 +1,4 @@
- function [Iestimated,correlation,similitude,t,dvf] = dvf_demons_estimated (fixedScene,movingScene,pyramLevels,initialItera,smoothLevels)
+ function [Iestimated,correlation,similitude,t,dvf] = dvf_demons_estimated(fixedScene,movingScene,pyramLevels,initialItera,smoothLevels)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Function non rigid registration to estimate the contour
 % propagation and displacement vector fields of a tomography sequence, from
